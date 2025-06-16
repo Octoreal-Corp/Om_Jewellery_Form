@@ -1,14 +1,18 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { buildFilterQuery } from "../utils/queryBuilder.js";
+import {
+  createUser,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  getFilteredUsers,
+} from "../models/user.models.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
-// Single Users
+
 const createSingleUser = asyncHandler(async (req, res, next) => {
   const {
     marital_status,
@@ -18,11 +22,12 @@ const createSingleUser = asyncHandler(async (req, res, next) => {
     dob,
     occupation,
     community,
+    samaj,
     address,
     pincode,
   } = req.body;
 
-  const data = {
+  const newUser = await createUser({
     marital_status,
     name,
     phone,
@@ -30,59 +35,43 @@ const createSingleUser = asyncHandler(async (req, res, next) => {
     dob,
     occupation,
     community,
+    samaj,
     address,
     pincode,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    id: crypto.randomUUID(),
-  };
+  });
 
-  const dbDir = path.join(__dirname, "../../db");
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-  }
-
-  const filePath = path.join(dbDir, "single-users.json");
-
-  try {
-    let existingData = [];
-    if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, "utf8");
-      existingData = JSON.parse(fileContent);
-    }
-
-    existingData.push(data);
-    fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
-
-    return res
-      .status(201)
-      .json(new ApiResponse(201, "Single User created successfully", data));
-  } catch (error) {
-    return next(new ApiError("Failed to create user: " + error.message, 500));
-  }
+  return res
+    .status(201)
+    .json(new ApiResponse(201, "Single User created successfully", newUser));
 });
 
 const getSingleUsers = asyncHandler(async (req, res, next) => {
-  const filePath = path.join(__dirname, "../../db/single-users.json");
-  const data = fs.readFileSync(filePath, "utf8");
+  const filters = { ...req.query };
+
+  const pagination = {
+    page: parseInt(req.query.page) || 1,
+    limit: parseInt(req.query.limit) || 10,
+    sort_by: req.query.sort_by || 'user_id',
+    sort_order: req.query.sort_order || 'DESC'
+  };
+
+  const result = await getFilteredUsers(filters, pagination);
+
+  
+  result.data = result.data.filter(
+    (user) => user.name && !user.husband_name && !user.wife_name
+  );
+
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        "Single Users fetched successfully",
-        JSON.parse(data)
-      )
-    );
+    .json(new ApiResponse(200, "Single Users fetched successfully", result));
 });
 
 const getSingleUserById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const filePath = path.join(__dirname, "../../db/single-users.json");
-  const data = fs.readFileSync(filePath, "utf8");
-  const user = JSON.parse(data).find((user) => user.id === id);
+  const user = await getUserById(id);
 
-  if (!user) {
+  if (!user || !user.name || user.husband_name || user.wife_name) {
     return next(new ApiError("Single User not found", 404));
   }
 
@@ -93,112 +82,92 @@ const getSingleUserById = asyncHandler(async (req, res, next) => {
 
 const updateSingleUser = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { ...data } = req.body;
-  const filePath = path.join(__dirname, "../../db/single-users.json");
-  const existingData = fs.readFileSync(filePath, "utf8");
-  const user = JSON.parse(existingData).find((user) => user.id === id);
 
-  if (!user) {
+  const updated = await updateUser(id, {
+    ...req.body,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (!updated) {
     return next(new ApiError("Single User not found", 404));
   }
 
-  const updatedData = {
-    ...user,
-    ...data,
-    updated_at: new Date().toISOString(),
-  };
-
-  const updatedDataArray = JSON.parse(existingData).map((user) =>
-    user.id === id ? updatedData : user
-  );
-
-  fs.writeFileSync(filePath, JSON.stringify(updatedDataArray, null, 2));
-
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, "Single User updated successfully", updatedData)
-    );
+    .json(new ApiResponse(200, "Single User updated successfully", updated));
 });
 
 const deleteSingleUser = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const filePath = path.join(__dirname, "../../db/single-users.json");
-  const existingData = fs.readFileSync(filePath, "utf8");
-  const user = JSON.parse(existingData).find((user) => user.id === id);
+  const deleted = await deleteUser(id);
 
-  if (!user) {
+  if (!deleted) {
     return next(new ApiError("Single User not found", 404));
   }
 
-  const updatedDataArray = JSON.parse(existingData).filter(
-    (user) => user.id !== id
-  );
-
-  fs.writeFileSync(filePath, JSON.stringify(updatedDataArray, null, 2));
-
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, "Single User deleted successfully", updatedDataArray)
-    );
+    .json(new ApiResponse(200, "Single User deleted successfully", deleted));
 });
 
-// Couple Users
+
+
 const createCoupleUser = asyncHandler(async (req, res, next) => {
-  const data = {
-    ...req.body,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    id: crypto.randomUUID(),
-  };
+  const {
+    marital_status,
+    husband_name,
+    wife_name,
+    phone,
+    whatsapp,
+    husband_dob,
+    wife_dob,
+    anniversary_date,
+    husband_occupation,
+    wife_occupation,
+    husband_samaj,
+    wife_samaj,
+    address,
+    pincode,
+  } = req.body;
 
-  const dbDir = path.join(__dirname, "../../db");
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-  }
+  const newUser = await createUser({
+    marital_status,
+    husband_name,
+    wife_name,
+    phone,
+    whatsapp,
+    husband_dob,
+    wife_dob,
+    anniversary_date,
+    husband_occupation,
+    wife_occupation,
+    husband_samaj,
+    wife_samaj,
+    address,
+    pincode,
+  });
 
-  const filePath = path.join(dbDir, "couple-users.json");
-
-  try {
-    let existingData = [];
-    if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, "utf8");
-      existingData = JSON.parse(fileContent);
-    }
-
-    existingData.push(data);
-    fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
-
-    return res
-      .status(201)
-      .json(new ApiResponse(201, "Couple User created successfully", data));
-  } catch (error) {
-    return next(new ApiError("Failed to create user: " + error.message, 500));
-  }
+  return res
+    .status(201)
+    .json(new ApiResponse(201, "Couple User created successfully", newUser));
 });
 
 const getCoupleUsers = asyncHandler(async (req, res, next) => {
-  const filePath = path.join(__dirname, "../../db/couple-users.json");
-  const data = fs.readFileSync(filePath, "utf8");
+  const users = await getAllUsers();
+  const couples = users.filter(
+    (user) => user.husband_name && user.wife_name
+  );
+
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        "Couple Users fetched successfully",
-        JSON.parse(data)
-      )
-    );
+    .json(new ApiResponse(200, "Couple Users fetched successfully", couples));
 });
 
 const getCoupleUserById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const filePath = path.join(__dirname, "../../db/couple-users.json");
-  const data = fs.readFileSync(filePath, "utf8");
-  const user = JSON.parse(data).find((user) => user.id === id);
+  const user = await getUserById(id);
 
-  if (!user) {
+  if (!user || !user.husband_name || !user.wife_name) {
     return next(new ApiError("Couple User not found", 404));
   }
 
@@ -207,60 +176,40 @@ const getCoupleUserById = asyncHandler(async (req, res, next) => {
     .json(new ApiResponse(200, "Couple User fetched successfully", user));
 });
 
+
 const updateCoupleUser = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { ...data } = req.body;
-  const filePath = path.join(__dirname, "../../db/couple-users.json");
-  const existingData = fs.readFileSync(filePath, "utf8");
-  const user = JSON.parse(existingData).find((user) => user.id === id);
 
-  if (!user) {
+  const updated = await updateUser(id, {
+    ...req.body,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (!updated) {
     return next(new ApiError("Couple User not found", 404));
   }
 
-  const updatedData = {
-    ...user,
-    ...data,
-    updated_at: new Date().toISOString(),
-  };
-
-  const updatedDataArray = JSON.parse(existingData).map((user) =>
-    user.id === id ? updatedData : user
-  );
-
-  fs.writeFileSync(filePath, JSON.stringify(updatedDataArray, null, 2));
-
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, "Couple User updated successfully", updatedData)
-    );
+    .json(new ApiResponse(200, "Couple User updated successfully", updated));
 });
 
 const deleteCoupleUser = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const filePath = path.join(__dirname, "../../db/couple-users.json");
-  const existingData = fs.readFileSync(filePath, "utf8");
-  const user = JSON.parse(existingData).find((user) => user.id === id);
+  const deleted = await deleteUser(id);
 
-  if (!user) {
+  if (!deleted) {
     return next(new ApiError("Couple User not found", 404));
   }
 
-  const updatedDataArray = JSON.parse(existingData).filter(
-    (user) => user.id !== id
-  );
-
-  console.log(updatedDataArray);
-
-  fs.writeFileSync(filePath, JSON.stringify(updatedDataArray, null, 2));
-
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, "Couple User deleted successfully", updatedDataArray)
-    );
+    .json(new ApiResponse(200, "Couple User deleted successfully", deleted));
 });
+
+
+
+
 
 export {
   createSingleUser,
