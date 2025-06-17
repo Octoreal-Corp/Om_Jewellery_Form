@@ -182,7 +182,7 @@ export async function getFilteredUsers(filters = {}, pagination = {}) {
   let queryParams = [];
   let paramIndex = 1;
 
-  // Build WHERE conditions dynamically
+  
   if (name) {
     whereConditions.push(`name ILIKE $${paramIndex}`);
     queryParams.push(`%${name}%`);
@@ -290,7 +290,7 @@ export async function getFilteredUsers(filters = {}, pagination = {}) {
     paramIndex++;
   }
 
-  // Build the WHERE clause
+  
   const whereClause = whereConditions.length > 0 
     ? `WHERE ${whereConditions.join(' AND ')}` 
     : '';
