@@ -42,7 +42,7 @@ const Form = () => {
         pincode: data.pincode,
       };
 
-      await axios.post("http://localhost:5000/api/users", payload);
+      await axios.post("https://om-jewellery-form.onrender.com/api/users/single", payload);
       alert("User submitted successfully!");
       singleForm.reset();
     } catch (error) {
@@ -74,7 +74,7 @@ const Form = () => {
         pincode: data.pincode,
       };
 
-      await axios.post("http://localhost:5000/api/users", payload);
+      await axios.post("https://om-jewellery-form.onrender.com/api/users/couple", payload);
       alert("User submitted successfully!");
       reset();
     } catch (error) {
