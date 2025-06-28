@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Form from "@/components/Form.tsx";
-import Dashboard from "@/pages/dashboard.tsx";
+import Dashboard from "@/pages/dash.tsx";
 
 function App() {
   return (
