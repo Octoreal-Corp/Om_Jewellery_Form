@@ -1,9 +1,16 @@
-import Form from "@/components/Form.tsx"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Form from "@/components/Form.tsx";
+import Dashboard from "@/pages/dashboard.tsx";
+
 function App() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Form />
-    </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/form" element={<Form />} />
+      </Routes>
+    </Router>
+  );
 }
-export default App
+
+export default App;

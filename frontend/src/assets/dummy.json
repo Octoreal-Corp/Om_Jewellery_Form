@@ -1,0 +1,48 @@
+[
+  {
+    "id": 1,
+    "customer_name": "Billu",
+    "birth_day": "2 Feb",
+    "phone_number": "(225) 555-0118",
+    "email": "jane@microsoft.com",
+    "anniversary_date": "4 June",
+    "status": "Married"
+  },
+  {
+    "id": 2,
+    "customer_name": "Ramu",
+    "birth_day": "5 Dec",
+    "phone_number": "(205) 555-0100",
+    "email": "floyd@yahoo.com",
+    "anniversary_date": null,
+    "status": "Single"
+  },
+  {
+    "id": 3,
+    "customer_name": "Raju",
+    "birth_day": "12 Aug",
+    "phone_number": "(302) 555-0107",
+    "email": "ronald@adobe.com",
+    "anniversary_date": "14 Sep",
+    "status": "Married"
+  },
+  {
+    "id": 4,
+    "customer_name": "Ramesh",
+    "birth_day": "15 Sep",
+    "phone_number": "(252) 555-0126",
+    "email": "marvin@tesla.com",
+    "anniversary_date": "4 Aug",
+    "status": "Married"
+  },
+  {
+    "id": 5,
+    "customer_name": "Sunita",
+    "birth_day": "3 May",
+    "phone_number": "(629) 555-0129",
+    "email": "jerome@google.com",
+    "anniversary_date": null,
+    "status": "Single"
+  }
+
+]
