@@ -6,13 +6,16 @@ import Users from "./components/Users"
 import Events from "./components/Events"
 import { Provider } from "react-redux"
 import appStore from './utils/appStore'
+import Customers from "./components/Customers"
+import AddEvent from "./components/AddEvent"
+import Roles from "./components/Roles"
 function App() {
 const router = createBrowserRouter(
       [
         {
           path:"/",
           element:<>
-          <Dashboard/>
+          <Customers/>
           </>
         },
         {
@@ -20,12 +23,29 @@ const router = createBrowserRouter(
           element:<Login/>
         },
         {
+          path:'/customers',
+          element:<Customers/>
+        }
+        ,
+        {
           path:'/users',
           element:<Users/>
         },
         {
           path:'/events',
-          element:<Events/>
+          element:<Events/>,
+        },
+         {
+          path:'/roles',
+          element:<Roles/>,
+        },
+        {
+          path:'/events/addEvent',
+          element:<AddEvent/> 
+        },
+         {
+          path:'/dashboard',
+          element:<Dashboard/>
         }
       ]
      )

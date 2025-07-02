@@ -1,66 +1,120 @@
- 
-import { LuNotebookPen } from "react-icons/lu";
-import { FaUsers } from "react-icons/fa6";
-import { PiCheersLight } from "react-icons/pi";
-import { LiaBirthdayCakeSolid } from "react-icons/lia";
-import data from '../assets/dummy.json'
+ import data from '../assets/dummy.json'
+import DashCard from './DashCard';
 import Sidebar from "./Sidebar";
-
-
+import usersImg from '../assets/images/users.svg';
+import userImg from '../assets/images/user.svg';
+import fuserImg from '../assets/images/fuser.svg';
+import cuserImg from '../assets/images/cuser.svg';
 const Dashboard = () => {
-    
+  const TotalData={
+    heading:"Total Customers",
+    users: data.length,
+    photo: usersImg,
+    description:"8.5% Up from last month"
+  }
+  const MaleData={
+    heading:"Male Customers",
+    users: data.filter(user=>user.gender==="Male").length,
+    photo: userImg,
+    description:"1.3% Up from past week"
+  }
+   const FemaleData={
+    heading:"Female Customers",
+    users: data.filter(user=>user.gender==="Female").length,
+    photo: fuserImg,
+    description:"1.3% Up from past week"
+  }
+  const MarriedData={
+    heading:"Married Customers",
+    users: data.filter(user=>user.status==="Married").length,
+    photo: cuserImg,
+    description:"1.3% Up from past week"
+  }
+  const SingleData={
+    heading:"Single Customers",
+    users: data.filter(user=>user.status==="Single").length,
+    photo: userImg,
+    description:"1.3% Up from past week"
+  }
+  
+  const CustomerData1=[
+    TotalData,
+    MaleData,
+    FemaleData,
+    MarriedData,
+    SingleData,
+  ]
+    const CustomerData2=[
+    TotalData,
+    MaleData,
+    FemaleData,
+    MarriedData,
+  ]
   return (
-    <div className="  h-screen w-full flex flex-col overflow-y-hidden ">
-        <div className="  flex items-center justify-center py-2 bg-radial font-semibold from-[#030303] via-35% via-[#0a0909] to-[#000000] w-full shadow-md shadow-neutral-600">
-            <h3 className=" text-2xl text-white">Dasboard</h3>
-            </div>
-
-        <div className="   h-full w-full flex ">
-
-       <Sidebar/>
-      
-      
-        <div className=" h-full w-full grid gap-4  grid-rows-[120px_1fr] px-10 py-2 pb-16">
-        <div className=" w-full h-full  grid grid-cols-[1fr_1fr_1fr_1fr] gap-16">
-            <div className=" flex gap-2 hover:scale-105 scale-100 ease-in-out duration-200 delay-100    bg-gradient-to-r from-[#ffffff] to-[#f8f8f8] shadow-md shadow-neutral-600/35 rounded-2xl p-4 cursor-pointer">
-                <span className=" text-lg font-semibold">Total Records</span><LuNotebookPen className=" text-xl mt-1"/>
-
-            </div>
-             <div className=" flex gap-2 hover:scale-105 scale-100 ease-in-out duration-200 delay-100    bg-gradient-to-r from-[#ffffff] to-[#f8f8f8] shadow-md shadow-neutral-600/35 rounded-2xl p-4 cursor-pointer">
-                <span className=" text-lg font-semibold">New Users This Month</span><FaUsers className=" text-xl mt-1"/>
-
-            </div>
-            <div className=" flex gap-2 hover:scale-105 scale-100 ease-in-out duration-200 delay-100    bg-gradient-to-r from-[#ffffff] to-[#f8f8f8] shadow-md shadow-neutral-600/35 rounded-2xl p-4 cursor-pointer">
-                <span className=" text-lg font-semibold">Upcoming Anniversaries</span><PiCheersLight className=" text-xl mt-1"/>
-
-            </div>
-         <div className=" flex gap-2 hover:scale-105 scale-100 ease-in-out duration-200 delay-100    bg-gradient-to-r from-[#ffffff] to-[#f8f8f8] shadow-md shadow-neutral-600/35 rounded-2xl p-4 cursor-pointer">
-                <span className=" text-lg font-semibold">Upcoming Birthdays</span><LiaBirthdayCakeSolid className=" text-xl mt-1"/>
-
-            </div>
-
-        </div>
-
-        <div className=" bg-gradient-to-r   from-[#fbfafa] to-[#fdfcfc]  shadow-xl/60 shadow-[#454444]  overflow-y-scroll h-full w-full rounded-xl  grid grid-cols-6 gap-6 py-6     scrollbar-hide">
-            {data.map((items)=>{
-                return(<>
-                 <div className=" text-base font-medium text-neutral-700 text-center">{items.customer_name}</div>
-                 <div className=" text-sm text-neutral-700 text-center">{items.birth_day}</div>
-                 <div className=" text-sm text-neutral-700 text-center">{items.phone_number}</div>
-                 <div className="text-sm text-neutral-700 text-center">{items.email}</div>
-                 <div className="text-sm text-neutral-700 text-center">{items.anniversary_date?items.anniversary_date:"-"}</div>
-                 <div className="text-base font-medium text-neutral-700 text-center">{items.status}</div>
-                </>)
-            })}
+      <div className=" h-screen w-full flex flex-col bg-white">
+      {/* Main Content Area */}
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
         
-      
-
+        {/* Dashboard Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Header */}
+          <div className="bg-white w-full flex justify-center  py-4  ">
+            <h1 className="text-2xl font-bold text-gray-800">Om Jwellery</h1>
+          </div>
+          <div className=' h-full w-full space-y-10 bg-rose-50 overflow-y-scroll'>
+          <div className='  w-full  md:px-14 px-6  '>
+            <div className='  h-16 w-full items-center   flex justify-between md:pr-4 md:gap-0 py-10'>
+          <h3 className=' text-base md:text-2xl font-bold'>Customers</h3>
+          <button className=' bg-[#6226EF] text-white rounded-sm text-xs px-4 py-2'>Add Customer</button>
+          </div>
+          <div className=' h-full w-full flex md:flex-row flex-col  items-center flex-wrap gap-7 py-2 '>
+            {
+              CustomerData1.map((i,index)=>{
+                return(
+                 <DashCard
+                  key={`customer-card-${index}`}
+                heading={i.heading}
+                users={i.users}
+                photo={i.photo}
+                description={i.description}
+                />
+               
+                )
+              })
+            }
+          </div>
+          </div>
+          <div className='  w-full  md:px-14 px-6'>
+            <div className='  h-16 w-full items-center   flex justify-between md:pr-4 md:gap-0 py-10'>
+          <h3 className=' md:text-2xl font-bold'>Promotions</h3>
+          <button className=' bg-[#6226EF] text-white rounded-sm text-xs md:px-4 px-2 py-2'>Add Promotional Event</button>
+          </div>
+          <div className=' h-full w-full flex flex-wrap gap-8 py-4 '>
+            {
+              CustomerData2.map((i,index)=>{
+                return(
+                 <DashCard
+                  key={`customer-card-${index}`}
+                heading={i.heading}
+                users={i.users}
+                photo={i.photo}
+                description={i.description}
+                />
+               
+                )
+              })
+            }
+          </div>
+          </div>
+          
+          
+          </div>
+          
         </div>
-        </div>
-
-        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
