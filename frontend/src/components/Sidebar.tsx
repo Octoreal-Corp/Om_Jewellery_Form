@@ -1,5 +1,3 @@
- 
-
 
 import { HiOutlineLogout } from "react-icons/hi";
 import { NavLink } from "react-router-dom";
