@@ -1,5 +1,4 @@
 import Sidebar from "./Sidebar"
-import data from '../assets/eventdata.json';
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
