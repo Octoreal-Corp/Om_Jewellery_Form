@@ -1,3 +1,4 @@
+ 
 import Dashboard from "./components/Dashboard"
 import { createBrowserRouter,RouterProvider } from 'react-router-dom'
  
@@ -9,6 +10,7 @@ import appStore from './utils/appStore'
 import Customers from "./components/Customers"
 import AddEvent from "./components/AddEvent"
 import Roles from "./components/Roles"
+ 
 function App() {
 const router = createBrowserRouter(
       [
@@ -50,6 +52,7 @@ const router = createBrowserRouter(
       ]
      )
   return (
+ 
      
     <div className="flex min-h-svh flex-col items-center justify-center">
       <Provider store={appStore}>
@@ -57,5 +60,7 @@ const router = createBrowserRouter(
         </Provider>
     </div>
   )
+ 
 }
-export default App
+
+export default App;

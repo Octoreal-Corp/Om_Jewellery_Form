@@ -1,5 +1,4 @@
 
-
 [
   {
     "id": 1,
@@ -195,5 +194,6 @@
     "status": "Single",
     "gender": "Male",
     "registration_date": "2024-01-18"
-  }
+  } 
+ 
 ]
