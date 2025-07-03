@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import userRoutes from "./routes/user.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import customerRoutes from './routes/customers.js';
 
 dotenv.config({
   path: "./.env",
@@ -10,10 +11,19 @@ dotenv.config({
 
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
+app.use(cors());
+app.use(express.json());
+
+app.use('/api/customers', customerRoutes);
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'Backend running!' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
 
 
