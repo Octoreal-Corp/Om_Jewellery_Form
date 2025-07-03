@@ -1,5 +1,5 @@
  import data from '../assets/dummy.json'
-import DashCard from './Dashcard';
+import DashCard from './DashCard';
 import Sidebar from "./Sidebar";
 import usersImg from '../assets/images/users.svg';
 import userImg from '../assets/images/user.svg';

@@ -1,6 +1,6 @@
 
 import Sidebar from "./Sidebar";
-
+import data from '../assets/rolesdata.json';
 import { useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 
