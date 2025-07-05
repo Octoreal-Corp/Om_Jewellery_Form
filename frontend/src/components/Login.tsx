@@ -2,12 +2,34 @@
 
 import  React, { useState } from 'react';
 import { Eye, EyeOff, User, Lock, ArrowRight } from 'lucide-react';
-import { useDispatch } from 'react-redux';
-import { addUser } from '../utils/userSlice';
+//import { useDispatch } from 'react-redux';
+//import { addUser } from '../utils/userSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
+
+
+
+interface AuthResponse {
+  token: string;
+  user: {
+    id: number;
+    email: string;
+    username?: string;
+    role?: string;
+   
+  };
+}
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
 
 const LoginPage = () => {
+  const { setUser } = useUser();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,59 +37,91 @@ const LoginPage = () => {
   const [loginError, setLoginError] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  
 
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async (e:React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setLoginError('');
-    
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-      dispatch(addUser(res.data));
-      navigate('/');
-    } catch (error:any) {
-      setLoginError(error.response?.data?.message || 'Something went wrong');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setLoginError('');
-    
     try {
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('email', email);
-      formData.append('password', password);
-    
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/signup`,
-        formData,
+      const res =  await axios.post<AuthResponse>(
+      `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          name: username,
+          email,
+          password,
+          phone: "",
+        },
         {
           withCredentials: true,
           headers: {
-            'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
           },
         }
       );
-      dispatch(addUser(res.data));
+      
+
+      localStorage.setItem('token', res.data.token);
+
+      
+      setUser({
+        id: res.data.user.id,
+        email: res.data.user.email,
+        name: res.data.user.username || 'Unnamed',
+        role: res.data.user.role || 'user'
+      });
+
       navigate('/');
-    } catch (error:any) {
+    } catch (error: any) {
       setLoginError(error.response?.data?.message || 'Something went wrong');
     } finally {
       setIsLoading(false);
     }
   };
+
+const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setLoginError('');
+
+    try {
+    const res = await axios.post<AuthResponse>(
+      `${import.meta.env.VITE_API_URL}/api/auth/signup`,
+      {
+        name: username,      
+        email,
+        phone: "",          
+        password
+      },
+      {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+      }
+    );
+
+    localStorage.setItem('token', res.data.token);
+
+      setUser({
+        id: res.data.user.id,
+        email: res.data.user.email,
+        name: res.data.user.username || 'Unnamed',
+        role: res.data.user.role || 'user'
+      });
+
+      navigate('/');
+    } catch (error: any) {
+      setLoginError(error.response?.data?.message || 'Something went wrong');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const handleFormSubmit = (e: React.FormEvent) => {
     if (isLogin) {

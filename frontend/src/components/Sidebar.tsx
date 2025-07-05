@@ -1,11 +1,19 @@
 
 import { HiOutlineLogout } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");      
+    setIsOpen(false);                      
+    navigate("/login");                    
+  };
 
   return (
     <>
@@ -67,26 +75,26 @@ const Sidebar = () => {
         </div>
 
         <div className="flex flex-col items-center gap-6 w-full">
-          <NavLink 
-            to={'/login'} 
-            onClick={() => setIsOpen(false)}
-            className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors text-base w-full   
-              text-center flex gap-2  items-center justify-center will-change-transform  "
-          >
-            <p>LogOut</p>
-            <HiOutlineLogout />
-          </NavLink>
-          {/* <div className="flex w-full gap-2 items-center">
+      <button
+        onClick={handleLogout}
+        className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors text-base w-full text-center flex gap-2 items-center justify-center"
+      >
+        <p>LogOut</p>
+        <HiOutlineLogout />
+      </button>
+    </div>
+    {/* <div className="flex w-full gap-2 items-center">
             <span className="w-10 h-10 rounded-full bg-red-100"></span>
             <div className="flex flex-col">
               <p className="text-sm text-neutral-100 font-medium">Admin</p>
               <p className="text-xs text-neutral-300">xyz</p>
             </div>
           </div> */}
-        </div>
       </div>
     </>
   );
 };
 
 export default Sidebar;
+
+

@@ -4,6 +4,8 @@ import cors from "cors";
 import userRoutes from "./routes/user.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import customerRoutes from './routes/customers.js';
+import eventRoutes from './routes/events.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config({
   path: "./.env",
@@ -13,10 +15,29 @@ dotenv.config({
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-app.use(cors());
+
+
+const allowedOrigins = ['http://localhost:5173'];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use('/api/auth', authRoutes);
+app.use("/api", authRoutes);
 
 app.use('/api/customers', customerRoutes);
+
+app.use('/api/events', eventRoutes);
+
+app.use('/uploads', express.static('uploads'));
+
+
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Backend running!' });
@@ -27,10 +48,6 @@ app.listen(PORT, () => {
 });
 
 
-
-
-app.use(cors());
-app.use(express.json()); 
 
 
 app.use("/api/users", userRoutes);

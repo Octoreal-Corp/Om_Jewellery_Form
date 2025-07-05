@@ -42,7 +42,7 @@ const Form = () => {
         pincode: data.pincode,
       };
 
-      await axios.post("http://localhost:5000/api/users", payload);
+      await axios.post("http://localhost:5000/api/customers", payload);
       alert("User submitted successfully!");
       singleForm.reset();
     } catch (error) {
@@ -74,7 +74,7 @@ const Form = () => {
         pincode: data.pincode,
       };
 
-      await axios.post("http://localhost:5000/api/users", payload);
+      await axios.post("http://localhost:5000/api/customers", payload);
       alert("User submitted successfully!");
       reset();
     } catch (error) {

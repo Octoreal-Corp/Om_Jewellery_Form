@@ -1,12 +1,38 @@
- 
-
-
-
+import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar"
-import data from '../assets/eventdata.json';
+import api from "../lib/api";
 import { Link } from "react-router-dom";
 
+
+interface EventData {
+  id: number;
+  name: string;
+  date: string;
+  message: string;
+  attachment: string;
+  repeat: string;
+}
+
 const Events = () => {
+  const [events, setEvents] = useState<EventData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchEvents = async () => {
+    try {
+      const res = await api.get<EventData[]>('/api/events');
+      setEvents(res.data);
+    } catch (err) {
+      console.error('Error fetching events:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+
    return (
      <div className="h-screen w-full flex flex-col bg-white">
       {/* Main Content Area */}
@@ -34,8 +60,11 @@ const Events = () => {
             
             {/* Mobile Card View (visible on small screens) */}
             <div className="block md:hidden flex-1 overflow-auto w-full space-y-3 px-2">
-              {data.map((item, index) => (
-                <div key={index} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                events.map((item) => (
+                <div key={item.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
                   <div className="space-y-2">
                     <div className="flex justify-between items-start">
                       <h3 className="font-semibold text-gray-900 text-sm flex-1 mr-2">{item.name}</h3>
@@ -54,7 +83,8 @@ const Events = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))
+            )}
             </div>
             
             {/* Desktop Table View (hidden on small screens) */}
@@ -80,39 +110,50 @@ const Events = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {data.map((item, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-3 lg:px-6 py-4 text-sm font-semibold text-gray-900">
-                        <div className="max-w-xs truncate" title={item.name}>
-                          {item.name}
-                        </div>
-                      </td>
-                      <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-xs text-gray-500">
-                        {item.date}
-                      </td>
-                      <td className="px-3 lg:px-6 py-4 text-sm text-gray-500">
-                        <div className="max-w-xs lg:max-w-sm truncate" title={item.message}>
-                          {item.message}
-                        </div>
-                      </td>
-                      <td className="px-3 lg:px-6 py-4 text-sm text-gray-500">
-                        <div className="max-w-xs truncate" title={item.attachment}>
-                          {item.attachment}
-                        </div>
-                      </td>
-                      <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {item.repeat}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+  {loading ? (
+    <tr>
+      <td colSpan={5} className="text-center py-4 text-gray-500">Loading...</td>
+    </tr>
+  ) : events.length > 0 ? (
+    events.map((item) => (
+      <tr key={item.id} className="hover:bg-gray-50">
+        <td className="px-3 lg:px-6 py-4 text-sm font-semibold text-gray-900">
+          <div className="max-w-xs truncate" title={item.name}>
+            {item.name}
+          </div>
+        </td>
+        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-xs text-gray-500">
+          {item.date}
+        </td>
+        <td className="px-3 lg:px-6 py-4 text-sm text-gray-500">
+          <div className="max-w-xs lg:max-w-sm truncate" title={item.message}>
+            {item.message}
+          </div>
+        </td>
+        <td className="px-3 lg:px-6 py-4 text-sm text-gray-500">
+          <div className="max-w-xs truncate" title={item.attachment}>
+            {item.attachment}
+          </div>
+        </td>
+        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+          {item.repeat}
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan={5} className="text-center py-4 text-gray-500">No events found.</td>
+    </tr>
+  )}
+</tbody>
+
               </table>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Events

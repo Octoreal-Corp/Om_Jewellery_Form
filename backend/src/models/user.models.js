@@ -21,10 +21,11 @@ export async function createUser(userData) {
       wife_samaj,
       address,
       pincode,
+      gender
     } = userData;
 
     const query = `
-      INSERT INTO users (
+      INSERT INTO customers (
         marital_status,
         husband_name,
         wife_name,
@@ -38,9 +39,10 @@ export async function createUser(userData) {
         husband_samaj,
         wife_samaj,
         address,
-        pincode
+        pincode,
+        gender
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING *;
     `;
 
@@ -59,6 +61,7 @@ export async function createUser(userData) {
       wife_samaj,
       address,
       pincode,
+      gender || 'Not specified'
     ];
 
     const { rows } = await pool.query(query, values);
@@ -76,10 +79,12 @@ export async function createUser(userData) {
       samaj,
       address,
       pincode,
+      gender,
+      
     } = userData;
 
     const query = `
-      INSERT INTO users (
+      INSERT INTO customers (
         marital_status,
         name,
         phone,
@@ -89,9 +94,10 @@ export async function createUser(userData) {
         community,
         samaj,
         address,
-        pincode
+        pincode,
+        gender,
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING *;
     `;
 
@@ -106,6 +112,7 @@ export async function createUser(userData) {
       samaj,
       address,
       pincode,
+      gender || 'Not specified'
     ];
 
     const { rows } = await pool.query(query, values);
@@ -115,13 +122,13 @@ export async function createUser(userData) {
 
 
 export async function getAllUsers() {
-  const { rows } = await pool.query("SELECT * FROM users ORDER BY user_id DESC");
+  const { rows } = await pool.query("SELECT * FROM customers ORDER BY user_id DESC");
   return rows;
 }
 
 
 export async function getUserById(id) {
-  const { rows } = await pool.query("SELECT * FROM users WHERE user_id = $1", [id]);
+  const { rows } = await pool.query("SELECT * FROM customers WHERE user_id = $1", [id]);
   return rows[0];
 }
 
@@ -133,7 +140,7 @@ export async function updateUser(id, userData) {
   const setString = fields.map((field, index) => `${field} = $${index + 1}`).join(", ");
 
   const query = `
-    UPDATE users
+    UPDATE customers
     SET ${setString}, updated_at = CURRENT_TIMESTAMP
     WHERE user_id = $${fields.length + 1}
     RETURNING *;
@@ -145,7 +152,7 @@ export async function updateUser(id, userData) {
 
 
 export async function deleteUser(id) {
-  const { rows } = await pool.query("DELETE FROM users WHERE user_id = $1 RETURNING *", [id]);
+  const { rows } = await pool.query("DELETE FROM customers WHERE user_id = $1 RETURNING *", [id]);
   return rows[0];
 }
 
@@ -300,7 +307,7 @@ export async function getFilteredUsers(filters = {}, pagination = {}) {
 
   // Main query
   const query = `
-    SELECT * FROM users 
+    SELECT * FROM customers
     ${whereClause}
     ORDER BY ${sort_by} ${sort_order}
     LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
@@ -310,7 +317,7 @@ export async function getFilteredUsers(filters = {}, pagination = {}) {
 
   // Count query for total records
   const countQuery = `
-    SELECT COUNT(*) as total FROM users 
+    SELECT COUNT(*) as total FROM customers
     ${whereClause}
   `;
 

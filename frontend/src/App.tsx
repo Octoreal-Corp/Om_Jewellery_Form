@@ -4,21 +4,25 @@ import { createBrowserRouter,RouterProvider } from 'react-router-dom'
  
 import Login from "./components/Login"
 import Users from "./components/Users"
+import Form from "./components/Form"
 import Events from "./components/Events"
 import { Provider } from "react-redux"
 import appStore from './utils/appStore'
 import Customers from "./components/Customers"
 import AddEvent from "./components/AddEvent"
 import Roles from "./components/Roles"
+import PrivateRoute from "./components/PrivateRoute";
  
 function App() {
 const router = createBrowserRouter(
       [
         {
           path:"/",
-          element:<>
-          <Customers/>
-          </>
+          element: (
+           <PrivateRoute>
+            <Customers />
+          </PrivateRoute>
+         ),
         },
         {
           path:"/login",
@@ -26,28 +30,52 @@ const router = createBrowserRouter(
         },
         {
           path:'/customers',
-          element:<Customers/>
+          element: (
+          <PrivateRoute>
+            <Customers />
+          </PrivateRoute>
+        ),
         }
         ,
+        {
+          path: "/customers/new",              
+          element: <Form />                    
+        },
         {
           path:'/users',
           element:<Users/>
         },
         {
           path:'/events',
-          element:<Events/>,
+          element: (
+          <PrivateRoute>
+            <Events />
+          </PrivateRoute>
+          ),
         },
          {
           path:'/roles',
-          element:<Roles/>,
+          element: (
+          <PrivateRoute>
+            <Roles />
+          </PrivateRoute>
+         ),
         },
         {
           path:'/events/addEvent',
-          element:<AddEvent/> 
+          element: (
+          <PrivateRoute>
+            <AddEvent />
+          </PrivateRoute>
+          ),
         },
          {
           path:'/dashboard',
-          element:<Dashboard/>
+          element: (
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        ),
         }
       ]
      )

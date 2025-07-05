@@ -1,6 +1,7 @@
 import Sidebar from "./Sidebar"
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import api from '../lib/api';
 
 const AddEvent = () => {
      const [eventType, setEventType] = useState<string>('');
@@ -10,11 +11,45 @@ const AddEvent = () => {
   const [timezone, setTimezone] = useState<string>('IST');
   const [photo, setPhoto] = useState<File | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!eventType || !eventDate || !repeatOption) {
+    alert("Please fill out all required fields.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('name', eventType);
+  formData.append('date', eventDate);
+  formData.append('repeat', repeatOption);
+  formData.append('message', `Scheduled for ${sendTime} ${timezone}`);
+  if (photo) {
+    formData.append('photo', photo);
+  }
+
+  try {
+    const response = await api.post('/api/events', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('Event created:', response.data);
     console.log({ eventType, eventDate, repeatOption, sendTime, timezone, photo });
-  };
+    alert('Event successfully added!');
+    
+    setEventType('');
+    setEventDate('');
+    setRepeatOption('');
+    setSendTime('08:00');
+    setTimezone('IST');
+    setPhoto(null);
+  } catch (err) {
+    console.error('Error submitting event:', err);
+    alert('Failed to add event.');
+  }
+};
 
    return (
      <div className="h-screen w-full flex flex-col bg-white">
@@ -30,7 +65,7 @@ const AddEvent = () => {
           </div>
           
           {/* Customers Section - Takes remaining height and scrollable */}
-          <div className="flex-1 flex flex-col items-center h-full w-full px-2 md:px-10 bg-rose-50 mx-1 md:mx-2 pb-2 md:pb-5 shadow-md overflow-hidden">
+          <div className="flex-1 flex flex-col items-center w-full px-2 md:px-10 bg-rose-50 mx-1 md:mx-2 pb-10 md:pb-10 shadow-md overflow-y-auto">
             {/* Customers Header */}
             <div className="flex flex-col md:flex-row justify-between items-start w-full md:items-center p-3 md:p-6 gap-3 md:gap-0">
               <h2 className="text-lg md:text-2xl   font-bold text-black">Add Promotion Event</h2>

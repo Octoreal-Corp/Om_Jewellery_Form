@@ -36,7 +36,7 @@ router.get("/stats/upcoming-anniversaries", getUpcomingAnniversaries);
 router.get("/stats/upcoming-birthdays", getUpcomingBirthdays);
 router.post("/", createUserController);
 
-router.get("/", async (req, res, next) => {
+router.get("/filtered", async (req, res, next) => {
   try {
     const filters = req.query; 
     const { page, limit } = req.query;
