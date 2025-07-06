@@ -10,6 +10,8 @@ import {
   deleteUser,
   getFilteredUsers,
 } from "../models/user.models.js";
+import pool from "../db/db.js";
+import dayjs from "dayjs";
 
 
 
@@ -207,6 +209,65 @@ const deleteCoupleUser = asyncHandler(async (req, res, next) => {
     .json(new ApiResponse(200, "Couple User deleted successfully", deleted));
 });
 
+const createUserController = asyncHandler(async (req, res, next) => {
+  const userData = req.body;
+
+  const newUser = await createUser(userData);
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, "User created successfully", newUser));
+});
+
+
+const getNewUsersCount = asyncHandler(async (req, res, next) => {
+  const first = dayjs().startOf("month").format("YYYY-MM-DD");
+  const last = dayjs().endOf("month").format("YYYY-MM-DD");
+
+  const { rows } = await pool.query(
+    `SELECT COUNT(*) FROM users WHERE created_at BETWEEN $1 AND $2`,
+    [first, last]
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "New users count", { total: parseInt(rows[0].count) }));
+});
+
+
+const getUpcomingAnniversaries = asyncHandler(async (req, res, next) => {
+  const { rows } = await pool.query(`
+    SELECT * FROM users 
+    WHERE anniversary_date IS NOT NULL 
+    AND EXTRACT(DOY FROM anniversary_date) BETWEEN 
+      EXTRACT(DOY FROM CURRENT_DATE) AND EXTRACT(DOY FROM CURRENT_DATE + INTERVAL '7 days')
+  `);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Upcoming anniversaries", { total: rows.length }));
+});
+
+// Get users with upcoming birthdays (dob, husband_dob, wife_dob)
+const getUpcomingBirthdays = asyncHandler(async (req, res, next) => {
+  const { rows } = await pool.query(`
+    SELECT * FROM users WHERE
+      (
+        dob IS NOT NULL AND EXTRACT(DOY FROM dob) BETWEEN EXTRACT(DOY FROM CURRENT_DATE) AND EXTRACT(DOY FROM CURRENT_DATE + INTERVAL '7 days')
+      )
+      OR (
+        husband_dob IS NOT NULL AND EXTRACT(DOY FROM husband_dob) BETWEEN EXTRACT(DOY FROM CURRENT_DATE) AND EXTRACT(DOY FROM CURRENT_DATE + INTERVAL '7 days')
+      )
+      OR (
+        wife_dob IS NOT NULL AND EXTRACT(DOY FROM wife_dob) BETWEEN EXTRACT(DOY FROM CURRENT_DATE) AND EXTRACT(DOY FROM CURRENT_DATE + INTERVAL '7 days')
+      );
+  `);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Upcoming birthdays", { total: rows.length }));
+});
+
 
 
 
@@ -222,4 +283,8 @@ export {
   getCoupleUserById,
   updateCoupleUser,
   deleteCoupleUser,
+  getNewUsersCount,
+  getUpcomingAnniversaries,
+  getUpcomingBirthdays,
+  createUserController,
 };

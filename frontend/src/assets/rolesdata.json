@@ -1,0 +1,82 @@
+[
+    {
+      "id": 1,
+      "name": "Ram Sharma",
+      "role": "Manager",
+      "email": "ram.sharma@omjewellery.com",
+      "phone": "(225) 555-0118",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "name": "Shyam Verma",
+      "role": "Employee",
+      "email": "shyam.verma@omjewellery.com",
+      "phone": "(225) 555-0145",
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "name": "Priya Patel",
+      "role": "Employee",
+      "email": "priya.patel@omjewellery.com",
+      "phone": "(225) 555-0172",
+      "status": "Active"
+    },
+    {
+      "id": 4,
+      "name": "Amit Singh",
+      "role": "Accountant",
+      "email": "amit.singh@omjewellery.com",
+      "phone": "(225) 555-0199",
+      "status": "Active"
+    },
+    {
+      "id": 5,
+      "name": "Neha Gupta",
+      "role": "Sales Associate",
+      "email": "neha.gupta@omjewellery.com",
+      "phone": "(225) 555-0126",
+      "status": "Active"
+    },
+    {
+      "id": 6,
+      "name": "Rahul Mehta",
+      "role": "Store Manager",
+      "email": "rahul.mehta@omjewellery.com",
+      "phone": "(225) 555-0153",
+      "status": "Active"
+    },
+    {
+      "id": 7,
+      "name": "Anjali Kapoor",
+      "role": "Inventory Manager",
+      "email": "anjali.kapoor@omjewellery.com",
+      "phone": "(225) 555-0180",
+      "status": "On Leave"
+    },
+    {
+      "id": 8,
+      "name": "Vikram Joshi",
+      "role": "Security",
+      "email": "vikram.joshi@omjewellery.com",
+      "phone": "(225) 555-0107",
+      "status": "Active"
+    },
+    {
+      "id": 9,
+      "name": "Sonia Reddy",
+      "role": "Cashier",
+      "email": "sonia.reddy@omjewellery.com",
+      "phone": "(225) 555-0134",
+      "status": "Active"
+    },
+    {
+      "id": 10,
+      "name": "Arjun Malhotra",
+      "role": "Employee",
+      "email": "arjun.malhotra@omjewellery.com",
+      "phone": "(225) 555-0161",
+      "status": "Active"
+    }
+  ] 
