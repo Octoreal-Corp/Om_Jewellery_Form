@@ -1,14 +1,8 @@
-
-
 import  React, { useState } from 'react';
 import { Eye, EyeOff, User, Lock, ArrowRight } from 'lucide-react';
-//import { useDispatch } from 'react-redux';
-//import { addUser } from '../utils/userSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-
-
 
 interface AuthResponse {
   token: string;
@@ -38,8 +32,6 @@ const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   
-
-  //const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
